@@ -1,5 +1,6 @@
 require_relative 'db_connection'
 require 'active_support/inflector'
+
 # NB: the attr_accessor we wrote in phase 0 is NOT used in the rest
 # of this project. It was only a warm up.
 
@@ -20,7 +21,13 @@ class SQLObject
   end
 
   def self.all
-    # ...
+    table_name = self.table_name
+    db_connection.execute(<<-SQL)
+    SELECT 
+      * 
+    FROM 
+      table_name;
+    SQL
   end
 
   def self.parse_all(results)
@@ -28,7 +35,9 @@ class SQLObject
   end
 
   def self.find(id)
-    # ...
+    table_name = self.table_name
+    query = "SELECT * FROM #{table_name} WHERE id = ?"
+    db_connection.execute(query, id).first
   end
 
   def initialize(params = {})
