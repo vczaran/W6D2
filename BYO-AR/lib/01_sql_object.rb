@@ -6,7 +6,9 @@ require 'active_support/inflector'
 
 class SQLObject
   def self.columns
-    # ...
+    self.table_name.each do |col|
+      puts col
+    end
   end
 
   def self.finalize!
@@ -17,17 +19,19 @@ class SQLObject
   end
 
   def self.table_name
-    # ...
+    self.to_s.downcase + 's'  # assuming table name is plural
   end
 
   def self.all
     table_name = self.table_name
-    db_connection.execute(<<-SQL)
+    data = DBConnection.execute(<<-SQL)
     SELECT 
       * 
     FROM 
-      table_name;
+      #{table_name}
     SQL
+
+    parse_all(data)
   end
 
   def self.parse_all(results)
@@ -35,9 +39,14 @@ class SQLObject
   end
 
   def self.find(id)
-    table_name = self.table_name
-    query = "SELECT * FROM #{table_name} WHERE id = ?"
-    db_connection.execute(query, id).first
+    # table_name = self.table_name
+    # data = db_connection.execute(<-- SQL, id)
+    # SELECT * 
+    # FROM #{table_name} 
+    # WHERE id = ?
+
+
+    # SQL
   end
 
   def initialize(params = {})
